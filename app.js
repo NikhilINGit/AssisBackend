@@ -5,16 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var connectDB = require('./config/connetion');
 var indexRouter = require('./routes/index');
-var dotenv = require("dotenv");
-const cors = require("cors");
-const serverless = require('serverless-http'); 
-
+var dotenv = require('dotenv');
+const cors = require('cors');
 var app = express();
 
+dotenv.config({ path: './config/config.env' });
 
-dotenv.config({ path: "./config/config.env" });
-
-// Connect DB
+// DB Connection
 connectDB();
 
 
@@ -27,29 +24,35 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(cors());
-const allowedOrigins = ['http://localhost:3001', 'https://nimble-meerkat-d43bbd.netlify.app']; 
 
+
+const allowedOrigins = ['http://localhost:3001', 'https://nimble-meerkat-d43bbd.netlify.app'];
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true, 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false
 }));
+
+
+app.options('*', cors());
 
 
 app.use('/', indexRouter);
 
-
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+app.use((req, res, next) => next(createError(404)));
 
 
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(err.status || 500).json({ error: err.message });
 });
 
 module.exports = app;
-module.exports.handler = serverless(app); 

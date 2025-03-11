@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const allowedOrigins = ['http://localhost:3001', 'https://nimble-meerkat-d43bbd.netlify.app'];
+const allowedOrigins = ['http://localhost:3001','http://localhost:3001', 'https://nimble-meerkat-d43bbd.netlify.app'];
 
 app.use(cors({
   origin: function (origin, callback) {

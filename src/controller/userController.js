@@ -12,6 +12,10 @@ exports.allTask=allTask;
 exports.deleteTask=deleteTask;
 exports.getTaskById=getTaskById;
 exports.updateTask=updateTask;
+exports.test=test;
+async function test(req,res){
+res.send("fucntion runn seccesfully")
+}
  async function updateTask(req, res)  {
   try {
     const { id } = req.params; 

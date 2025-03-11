@@ -11,4 +11,5 @@ router.get("/allTask",check.verifyToken,UserController.allTask);
 router.get("/task/:id",check.verifyToken,UserController.getTaskById);
 router.delete("/deleteTask/:id",check.verifyToken,UserController.deleteTask);
 router.put("/task/update/:id",check.verifyToken,UserController.updateTask);
+router.get("test",UserController.test);
 module.exports = router;

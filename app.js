@@ -25,25 +25,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-const allowedOrigins = ['http://localhost:3001','http://localhost:3001', 'https://nimble-meerkat-d43bbd.netlify.app'];
-
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
-
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://nimble-meerkat-d43bbd.netlify.app'
+    ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false 
-}));
+  credentials: true
+};
 
-
-app.options('*', cors());
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 
 app.use('/', indexRouter);
